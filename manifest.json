@@ -1,0 +1,11 @@
+{
+  "name":"逛豆瓣的时候看看大工图书馆有没有书可以借",
+  "version":"2.0.0",
+  "manifest_version":2,
+  "content_scripts":[{
+      "matches":["http://book.douban.com/subject/*"],
+      "js":["douban_lib_dut.user.js"]
+    }],
+  "description":"轻松点吧",  
+  "permissions":[ "tabs", "http://*/*", "https://*/*", "notifications"]
+}
