@@ -23,42 +23,56 @@ function send(s_data,callback){
     }
   }
   cor.open("get",basicLink + "openlink.php?" + s_data, true);
-  cor.send(null); 
+  cor.send(null);
 }
 function useISBN(data){
-  var full = data.split('strong')[16];
-  var canGet = data.split('strong')[18];
+  data = new DOMParser().parseFromString(data, 'text/html');
+  var result = document.evaluate("/html/body/div[@id='mainbox']/div[@id='container']/div[@id='content']/div[@class='book_article'][4]/ol[@id='search_book_list']/li[@class='book_list_info']/h3/a", data, null, XPathResult.ANY_TYPE, null)
+  var lalala = document.createElement('div');
   var aside = $('.aside')[0];
-  if(full == undefined && canGet == undefined){
-    useBookName();
-    var lalala = document.createElement("div");
-    lalala.setAttribute("class", "gray_ad");
-    lalala.innerHTML = "<h2>在大工图书馆的情况?~~~</h2>\
-                        <ul class=\"bs_noline\"> \
-                        <li>学校没有这本书哦～</li>\
-                        </ul>";
-    aside.insertBefore(lalala, aside.childNodes[5]);
-    
+  lalala.setAttribute("class", "gray_ad");
+  lalala.innerHTML += "<h2>在大工圖書館的情況？~~~</h2><ul class='bs_noline'>";
+  if(result !== null){
+    var node = result.iterateNext();
+    lalala.innerHTML += "<li><a target='_blank' href='"+basicLink+node.getAttribute('href')+"'>有書，去看看~~</a></li></ul>";
   }
   else{
-    full = full[1], canGet = canGet[1];
-    var itemlink = data.split('item.php?marc_no=')
-    var lalala = document.createElement("div");
-    lalala.setAttribute("class", "gray_ad");
-    lalala.innerHTML = "<h2>在大工图书馆的情况?~~~</h2>\
-                        <ul class=\"bs_noline\"> \
-                          <li><a target=\"_blank\" href=\"" + basicLink + "item.php?marc_no=" +itemlink[1].split(">")[0] +"\"> 去看看</a></li>\
-                          <li>馆藏副本" + full + "</li>\
-                          <li>可借副本" + canGet + "</li>\
-                        </ul>";
-    aside.insertBefore(lalala, aside.childNodes[5]);
+    lalala.innerHTML += "<li>學校沒有這本書哦~</li></ul>";
   }
+  aside.insertBefore(lalala, aside.childNodes[5]);
+  // var full = data.split('strong')[16];
+  // var canGet = data.split('strong')[18];
+  // var aside = $('.aside')[0];
+  // if(full == undefined && canGet == undefined){
+  //   //useBookName();
+  //   var lalala = document.createElement("div");
+  //   lalala.setAttribute("class", "gray_ad");
+  //   lalala.innerHTML = "<h2>在大工图书馆的情况?~~~</h2>\
+  //                       <ul class=\"bs_noline\"> \
+  //                       <li>学校没有这本书哦～</li>\
+  //                       </ul>";
+  //   aside.insertBefore(lalala, aside.childNodes[5]);
+  //
+  // }
+  // else{
+  //   full = full[1], canGet = canGet[1];
+  //   var itemlink = data.split('item.php?marc_no=')
+  //   var lalala = document.createElement("div");
+  //   lalala.setAttribute("class", "gray_ad");
+  //   lalala.innerHTML = "<h2>在大工图书馆的情况?~~~</h2>\
+  //                       <ul class=\"bs_noline\"> \
+  //                         <li><a target=\"_blank\" href=\"" + basicLink + "item.php?marc_no=" +itemlink[1].split(">")[0] +"\"> 去看看</a></li>\
+  //                         <li>馆藏副本" + full + "</li>\
+  //                         <li>可借副本" + canGet + "</li>\
+  //                       </ul>";
+  //   aside.insertBefore(lalala, aside.childNodes[5]);
+  // }
 }
 
 function useBookName(){
   var bookName = document.querySelectorAll("title")[0].innerText.split("(")[0];
   bookName = "strSearchType=title&strText=" + bookName;
-  send(bookName, function(data){ 
+  send(bookName, function(data){
     var itemlink = data.split('item.php?marc_no=')
     var aside = $('.aside')[0];
     if(itemlink == undefined){
@@ -69,7 +83,7 @@ function useBookName(){
                           <li>学校应该没有这本书哦～</li>\
                           </ul>";
       aside.insertBefore(lalala, aside.childNodes[5]);
-    
+
     }
     else{
       var lalala = document.createElement("div");
@@ -78,7 +92,7 @@ function useBookName(){
                           <ul class=\"bs_noline\"> \
                           <li>这本书没有，有相似的书籍（去看看？)</li>";
       for(var i = 1; i < itemlink.length; i++){
-        lalala.innerHTML += "<li><a target=\"_blank\" href=\"" + basicLink + "item.php?marc_no=" + itemlink[i].split(">")[0] +"\">" + bookName.split("strText=")[1] + "</a></li>"; 
+        lalala.innerHTML += "<li><a target=\"_blank\" href=\"" + basicLink + "item.php?marc_no=" + itemlink[i].split(">")[0] +"\">" + bookName.split("strText=")[1] + "</a></li>";
       }
       lalala.innerHTML += "</ul>";
       aside.insertBefore(lalala, aside.childNodes[5]);
