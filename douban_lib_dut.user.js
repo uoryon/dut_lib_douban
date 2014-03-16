@@ -32,8 +32,8 @@ function useISBN(data){
   var aside = $('.aside')[0];
   lalala.setAttribute("class", "gray_ad");
   lalala.innerHTML += "<h2>在大工圖書館的情況？~~~</h2><ul class='bs_noline'>";
-  if(result !== null){
-    var node = result.iterateNext();
+  var node = result.iterateNext();
+  if(node !== null){
     lalala.innerHTML += "<li><a target='_blank' href='"+basicLink+node.getAttribute('href')+"'>有書，去看看~~</a></li></ul>";
   }
   else{
